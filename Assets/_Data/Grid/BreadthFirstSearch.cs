@@ -64,10 +64,9 @@ public class BreadthFirstSearch : GridAbstract, IPathFinding
         Vector3 pos;
         foreach(Node node in this.path)
         {
-            pos = node.nodeTransform.transform.position;
+            pos = node.nodeObj.transform.position;
             Transform linker = this.ctrl.blockSpawner.Spawn(BlockSpawner.LINKER, pos, Quaternion.identity);
             linker.gameObject.SetActive(true);
-            // node.blockCtrl.blockData.SetColor(Color.yellow);
         }
     }
 
