@@ -13,9 +13,22 @@ public class Node
     public int weight = 1;
     public bool occupied = false;
     // nếu ở node vị trí x, y có pokemon thì sẽ là true 
-    public Node up;
+    public Node up; 
+    public Node right;
     public Node down;
     public Node left;
-    public Node right;
+    public NodeTransform nodeTransform;
     public BlockCtrl blockCtrl;
+
+    public virtual List<Node> Neighbors()
+    {
+        List<Node> nodes = new List<Node>
+        {
+            up,
+            right,
+            down,
+            left
+        };
+        return nodes;
+    }
 }

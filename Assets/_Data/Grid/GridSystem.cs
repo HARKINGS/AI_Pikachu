@@ -29,8 +29,46 @@ public class GridSystem : GridAbstract
 
     protected override void Start()
     {
-        // this.SpawnNodes();
+        this.SpawnHolders();
         this.SpawnBlocks();
+        this.FindNodesNeighbors();
+        this.FindBlockNeighbors();
+    }
+
+    protected virtual void FindNodesNeighbors()
+    {
+        int x, y;
+        foreach(Node node in this.nodes)
+        {
+            x = node.x;
+            y = node.y;
+
+            node.up = this.GetNodeByXY(x, y + 1);
+            node.right = this.GetNodeByXY(x + 1, y);
+            node.down = this.GetNodeByXY(x, y - 1);
+            node.left = this.GetNodeByXY(x - 1, y);
+        }
+    }
+
+    protected virtual Node GetNodeByXY(int x, int y)
+    {
+        foreach(Node node in this.nodes)
+            if(node.x == x && node.y == y) 
+                return node;
+
+        return null;
+    }
+
+    protected virtual void FindBlockNeighbors()
+    {
+        foreach(Node node in this.nodes)
+        {
+            if(node.blockCtrl == null) continue;
+            node.blockCtrl.neighbors.Add(node.up.blockCtrl);
+            node.blockCtrl.neighbors.Add(node.right.blockCtrl);
+            node.blockCtrl.neighbors.Add(node.down.blockCtrl);
+            node.blockCtrl.neighbors.Add(node.left.blockCtrl);
+        }
     }
 
     protected virtual void InitGridSystem() 
@@ -54,23 +92,26 @@ public class GridSystem : GridAbstract
             }
     }
 
-    protected virtual void SpawnNodes() 
+    protected virtual void SpawnHolders() 
     {
         Vector3 pos = Vector3.zero;
         foreach(Node node in this.nodes)
         {
-            if (node.x == 0 || 
-                node.y == 0 || 
-                node.x == this.width - 1 || 
-                node.y == this.height - 1)
-                continue;
+            // if (node.x == 0 || 
+            //     node.y == 0 || 
+            //     node.x == this.width - 1 || 
+            //     node.y == this.height - 1)
+            //     continue;
 
             pos.x = node.posX;
             pos.y = node.y;
-            Transform block = this.ctrl.blockSpawner.Spawn(BlockSpawner.BLOCK, pos, Quaternion.identity);
-            BlockCtrl blockCtrl = block.GetComponent<BlockCtrl>();
+            Transform blockObj = this.ctrl.blockSpawner.Spawn(BlockSpawner.HOLDER, pos, Quaternion.identity);
+            NodeTransform blockHolder = blockObj.GetComponent<NodeTransform>();
+            node.nodeTransform = blockHolder;
+            blockObj.name = "Holder_" + node.x.ToString() + "_" + node.y.ToString();
+            blockHolder.gameObject.SetActive(true);
 
-            block.gameObject.SetActive(true);
+            blockObj.gameObject.SetActive(true);
         }
     }
 
@@ -87,18 +128,15 @@ public class GridSystem : GridAbstract
                 pos.y = node.y;
 
                 Transform block = this.ctrl.blockSpawner.Spawn(BlockSpawner.BLOCK, pos, Quaternion.identity);
-                BlockCtrl blockCtrl = block.GetComponent<BlockCtrl>();
-                
+                BlockCtrl blockCtrl = block.GetComponent<BlockCtrl>();                
                 blockCtrl.blockData.SetSprite(sprite);
-
-                // GridManagerCtrl.Instance.gridSystem.blocks.Add(blockCtrl);
 
                 this.LinkNodeBlock(node, blockCtrl);
                 block.name = "Block_" + node.x.ToString() + "_" + node.y.ToString();
 
                 block.gameObject.SetActive(true);
 
-                // this.NodeOccupied(node);
+                node.occupied = true;
             }
         }
     }

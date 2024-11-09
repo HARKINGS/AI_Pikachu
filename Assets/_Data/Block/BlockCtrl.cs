@@ -22,15 +22,7 @@ public class BlockCtrl : SaiMonoBehaviour
         this.LoadModel();
         this.LoadBlockData();
     }
-
-    // protected virtual void LoadModel()
-    // {
-    //     if (this.spriteRender != null) return;
-    //     Transform model = transform.Find("Model");
-    //     this.spriteRender = model.GetComponent<SpriteRenderer>();
-    //     Debug.Log(transform.name + " LoadModel", gameObject);
-    // }
-
+    
     protected virtual void LoadModel()
     {
         if (this.spriteRender != null) return;

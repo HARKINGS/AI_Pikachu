@@ -9,13 +9,10 @@ public class GridManagerCtrl : SaiMonoBehaviour
     public static GridManagerCtrl Instance => instance;
 
     public BlockSpawner blockSpawner;
-    // public BlockHandler blockHandler;
-    // public BlockAuto blockAuto;
-
-    public BlockCtrl firstCtrl;
-    public BlockCtrl lastCtrl;
-    public GridSystem gridSystem;
-    // public AbstractPathfinding pathfinding;
+    public IPathFinding pathFinding;
+    public BlockCtrl firstBlock;
+    public BlockCtrl lastBlock;
+    
 
     protected override void Awake()
     {
@@ -28,10 +25,7 @@ public class GridManagerCtrl : SaiMonoBehaviour
     {
         base.LoadComponents();
         this.LoadSpawner();
-        // this.LoadBlockAuto();
-        // this.LoadPathfinding();
-        // this.LoadBlockHandler();
-        this.LoadGridSystem();
+        this.LoadPathFinding();
     }
 
     protected virtual void LoadSpawner()
@@ -41,36 +35,37 @@ public class GridManagerCtrl : SaiMonoBehaviour
         Debug.LogWarning(transform.name + " LoadSpawner", gameObject);
     }
 
+    protected virtual void LoadPathFinding()
+    {
+        if (this.pathFinding != null) return;
+        this.pathFinding = transform.GetComponentInChildren<IPathFinding>();
+        Debug.LogWarning(transform.name + " LoadPathFinding", gameObject);
+    }
+
     public virtual void SetNode(BlockCtrl blockCtrl)
     {
-        
+        if(this.firstBlock != null && this.lastBlock != null)   
+        {
+            this.pathFinding.FindPath(this.firstBlock, this.lastBlock);
+            this.firstBlock = null;
+            this.lastBlock = null;
+            Debug.Log("Reset Block");
+            return;
+        }
+
+        if(this.firstBlock == null) 
+        {
+            this.firstBlock = blockCtrl;
+            return;
+        }
+
+        this.lastBlock = blockCtrl;        
     }
 
-    // protected virtual void LoadBlockAuto()
+    // protected virtual void LoadGridSystem()
     // {
-    //     if (this.blockAuto != null) return;
-    //     this.blockAuto = transform.Find("BlockAuto").GetComponent<BlockAuto>();
-    //     Debug.LogWarning(transform.name + " LoadBlockAuto", gameObject);
-    // }
-
-    // protected virtual void LoadBlockHandler()
-    // {
-    //     if (this.blockHandler != null) return;
-    //     this.blockHandler = transform.Find("BlockHandler").GetComponent<BlockHandler>();
-    //     Debug.LogWarning(transform.name + " LoadBlockHandler", gameObject);
-    // }
-
-    protected virtual void LoadGridSystem()
-    {
-        if (this.gridSystem != null) return;
-        this.gridSystem = transform.Find("GridSystem").GetComponent<GridSystem>();
-        Debug.LogWarning(transform.name + " LoadGridSystem", gameObject);
-    }
-
-    // protected virtual void LoadPathfinding()
-    // {
-    //     if (this.pathfinding != null) return;
-    //     this.pathfinding = transform.GetComponentInChildren<AbstractPathfinding>();
-    //     Debug.LogWarning(transform.name + " LoadPathfinding", gameObject);
+    //     if (this.gridSystem != null) return;
+    //     this.gridSystem = transform.Find("GridSystem").GetComponent<GridSystem>();
+    //     Debug.LogWarning(transform.name + " LoadGridSystem", gameObject);
     // }
 }
