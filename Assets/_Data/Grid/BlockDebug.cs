@@ -61,7 +61,6 @@ public class BlockDebug : GridAbstract
     public virtual void AutoPlay()
     {
         GridManagerCtrl.Instance.blockAuto.ShowHint();
-
         Invoke(nameof(this.AutoClickBlocks), this.autoPlaySpeed);
     }
 
@@ -70,15 +69,15 @@ public class BlockDebug : GridAbstract
         BlockCtrl firstBlock = GridManagerCtrl.Instance.blockAuto.firstBlock;
         BlockCtrl secondBlock = GridManagerCtrl.Instance.blockAuto.secondBlock;
 
-        Debug.Log("==== AutoPlay ==============================");
-        Debug.Log("blockCtrl: " + firstBlock.blockData.node.Name());
-        Debug.Log("sameBlock: " + secondBlock.blockData.node.Name());
+        // Debug.Log("==== AutoPlay ==============================");
+        // Debug.Log("blockCtrl: " + firstBlock.blockData.node.Name());
+        // Debug.Log("sameBlock: " + secondBlock.blockData.node.Name());
 
         if (firstBlock.blockData.node.occupied == false
             || secondBlock.blockData.node.occupied == false)
         {
             Debug.Log("No more Move");
-
+            GridManagerCtrl.Instance.blockAuto.ShuffleBlocks(); 
             return;
         }
 

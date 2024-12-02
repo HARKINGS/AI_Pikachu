@@ -58,21 +58,6 @@ public class BlockAuto : GridAbstract
         }
     }
 
-    // protected virtual void SwapBlocks(BlockCtrl firstBlock, BlockCtrl secondBlock) {
-    //     if (firstBlock == secondBlock) return;
-    //     BlockCtrl temp = firstBlock.Clone();
-    //     //BlockCtrl temp = blockCtrl;
-    //     Node tempNode = temp.blockData.node;
-
-    //     firstBlock.sprite = secondBlock.sprite;
-    //     firstBlock.blockData.node = secondBlock.blockData.node;
-    //     firstBlock.blockData.SetSprite(firstBlock.sprite);
-
-    //     secondBlock.sprite = temp.sprite;
-    //     secondBlock.blockData.node = tempNode;
-    //     secondBlock.blockData.SetSprite(secondBlock.sprite);
-    // }
-
     public bool SwapBlocks(BlockCtrl firstBlock, BlockCtrl secondBlock)
     {
         if (firstBlock == secondBlock) return false;

@@ -6,6 +6,7 @@ public class BtnAutoPlay : BaseButton
 {
     protected override void OnClick()
     {
+        BlockDebug.Instance.continuePlay = !BlockDebug.Instance.continuePlay;
         BlockDebug.Instance.AutoPlay();
     }
 }
