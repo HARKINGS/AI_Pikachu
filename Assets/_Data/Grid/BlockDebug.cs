@@ -7,14 +7,24 @@ public class BlockDebug : GridAbstract
     [Header("Block Debug")]
     private static BlockDebug instance;
     public static BlockDebug Instance => instance;
-    public bool continuePlay = true;
+    public bool continuePlay = false;
     public float autoPlaySpeed = 0.5f;
+
+    // public int numBlockMatching = 0;
+
+    public AudioSource audioSource;
+    public AudioClip noMoveSound;
 
     protected override void Awake()
     {
         base.Awake();
         if (BlockDebug.instance != null) Debug.LogError("Only 1 BlockDebug allow to exist");
         BlockDebug.instance = this;
+    }
+
+    protected virtual void PlayNoMoveSound() 
+    {
+        audioSource.PlayOneShot(noMoveSound);
     }
 
     protected virtual void Update()
@@ -60,12 +70,16 @@ public class BlockDebug : GridAbstract
 
     public virtual void AutoPlay()
     {
+        if(!this.continuePlay) return;
         GridManagerCtrl.Instance.blockAuto.ShowHint();
         Invoke(nameof(this.AutoClickBlocks), this.autoPlaySpeed);
     }
 
     protected virtual void AutoClickBlocks()
     {
+        if(BlockHandler.numBlockMatching == 144) 
+            return;
+            
         BlockCtrl firstBlock = GridManagerCtrl.Instance.blockAuto.firstBlock;
         BlockCtrl secondBlock = GridManagerCtrl.Instance.blockAuto.secondBlock;
 
@@ -76,18 +90,18 @@ public class BlockDebug : GridAbstract
         if (firstBlock.blockData.node.occupied == false
             || secondBlock.blockData.node.occupied == false)
         {
-            GridManagerCtrl.Instance.blockAuto.ShuffleBlocks();
             this.continuePlay = false;
+            GridManagerCtrl.Instance.blockAuto.ShuffleBlocks();
+            this.PlayNoMoveSound();
             Debug.Log("No more Move"); 
             return;
         }
-
 
         GridManagerCtrl.Instance.blockHandler.SetNode(firstBlock);
         GridManagerCtrl.Instance.blockHandler.SetNode(secondBlock);
 
         this.ClearDebug();
 
-        if (this.continuePlay) Invoke(nameof(this.AutoPlay), this.autoPlaySpeed);
+        Invoke(nameof(this.AutoPlay), this.autoPlaySpeed);
     }
 }

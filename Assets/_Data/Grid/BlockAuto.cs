@@ -8,11 +8,10 @@ public class BlockAuto : GridAbstract
     public BlockCtrl firstBlock;
     public BlockCtrl secondBlock;
 
-
     public virtual void ShowHint()
     {
         // Debug.LogWarning("ShowHint");
-
+        
         List<BlockCtrl> sameBlocks = new List<BlockCtrl>();
         foreach(BlockCtrl blockCtrl in this.ctrl.gridSystem.blocks)
         {
@@ -31,6 +30,8 @@ public class BlockAuto : GridAbstract
             }
         }
 
+        // this.firstBlock.blockData.node.occupied = true;
+        // this.secondBlock.blockData.node.occupied = true;
         // Debug.Log("Not Found");
     }
 

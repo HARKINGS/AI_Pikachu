@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(BoxCollider))]
 public class BlockClickable : BlockAbstract
@@ -25,6 +26,7 @@ public class BlockClickable : BlockAbstract
 
     protected void OnMouseUp()
     {
+        if(BlockDebug.Instance.continuePlay) return;
         GridManagerCtrl.Instance.blockHandler.SetNode(this.ctrl);
     }
 }

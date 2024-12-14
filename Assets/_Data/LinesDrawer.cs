@@ -16,7 +16,7 @@ public class LinesDrawer : SaiMonoBehaviour
     {
         if (this.lineRenderer != null) return;
         this.lineRenderer = GetComponent<LineRenderer>();
-        Debug.LogWarning(transform.name + " LoadLineRender", gameObject);
+        // Debug.LogWarning(transform.name + " LoadLineRender", gameObject);
     }
 
     public virtual void Drawing(List<Node> nodes, float cleanDelay)

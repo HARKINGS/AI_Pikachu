@@ -30,9 +30,9 @@ public class LinesSearch : AbstractPathfinding
         Node targetNode = targetBlock.blockData.node;
         this.pathNodes.Add(startNode);
 
-        Debug.Log("==============================");
-        startNode.Dump("startNode: ");
-        targetNode.Dump("targetNode: ");
+        // Debug.Log("==============================");
+        // startNode.Dump("startNode: ");
+        // targetNode.Dump("targetNode: ");
 
         //Line up
         // đường đi thẳng, không bị chặn
@@ -42,30 +42,30 @@ public class LinesSearch : AbstractPathfinding
             return true;
         }
 
-        //Two cross points
-        Debug.Log("== Two cross points =================");
+        // 2 đường
+        // Debug.Log("== Two cross points =================");
         List<Vector2> twoCrossPoints = this.GetCrossPoints(startNode, targetNode);
         if (this.IsCrossPointsLinked(startNode, targetNode, twoCrossPoints)) return true;
 
         List<Vector2> multiCrossPoints;
 
-        //Bellow Cross Point
-        Debug.Log("== Bellow cross points =================");
+        // Các điểm dưới
+        // Debug.Log("== Bellow cross points =================");
         multiCrossPoints = this.GetBellowCrossPoints(startNode);
         if (this.CheckMultiCrossPoints(multiCrossPoints, targetNode)) return true;
 
-        //Above Cross Point
-        Debug.Log("== Above cross points =================");
+        // Các điểm trên
+        // Debug.Log("== Above cross points =================");
         multiCrossPoints = this.GetAboveCrossPoints(startNode);
         if (this.CheckMultiCrossPoints(multiCrossPoints, targetNode)) return true;
 
-        //Right Cross Point
-        Debug.Log("== Right cross points =================");
+        // Các điểm phải
+        // Debug.Log("== Right cross points =================");
         multiCrossPoints = this.GetRightCrossPoints(startNode);
         if (this.CheckMultiCrossPoints(multiCrossPoints, targetNode)) return true;
 
-        //Left Cross Point
-        Debug.Log("== Left cross points =================");
+        // Các điểm trái
+        // Debug.Log("== Left cross points =================");
         multiCrossPoints = this.GetLeftCrossPoints(startNode);
         if (this.CheckMultiCrossPoints(multiCrossPoints, targetNode)) return true;
 
