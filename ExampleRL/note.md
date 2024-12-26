@@ -1,0 +1,7 @@
+- Goal (mục đích): Đi đến được chỗ cắm cờ
+- Environment (môi trường): Con dốc và xe
+- Agent (máy): 
+- State (trạng thái): Trạng thái của xe có 2 thông tin: Toạ độ của xe theo trục x và vận tốc của xe
+- Action (hành động): Có 3 loại: Đẩy sang phải, đẩy sang trái và không tác động gì
+- Reward (phần thưởng): Mỗi bước di chuyển không đến cờ sẽ bị trừ reward 1 số điểm, đến cờ thưởng reward 100 điểm
+- Terminate state: Trạng thái dừng (Khi đến cờ hoặc quá số bước limit)
