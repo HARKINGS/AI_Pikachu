@@ -15,10 +15,11 @@ class Agent:
 
     def __init__(self):
         self.n_games = 0
+        self.record = 0
         self.epsilon = 0.9 # randomness
         self.gamma = 0.9 # discount rate
         self.memory = deque(maxlen=MAX_MEMORY) # popleft()
-        self.model = Linear_QNet(11, 256, 3)
+        self.model = Linear_QNet(11, 1024, 3)
         self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
 
     def get_state(self, game):
@@ -87,10 +88,11 @@ class Agent:
 
     def get_action(self, state):
         # random moves: tradeoff exploration / exploitation
-        self.epsilon = 80 - self.n_games
+        # self.epsilon = 80 - self.n_games
 
         final_move = [0,0,0]
-        if random.randint(0, 200) < self.epsilon:
+        # if random.randint(0, 200) < self.epsilon:
+        if random.random() < self.epsilon:
             move = random.randint(0, 2)
             final_move[move] = 1
         else:
@@ -99,7 +101,7 @@ class Agent:
             move = torch.argmax(prediction).item()
             final_move[move] = 1
 
-        # self.epsilon *= 0.98
+        self.epsilon *= 0.98
         return final_move
 
     def save_model(self, file_name='model.pth'):
@@ -111,6 +113,7 @@ class Agent:
         torch.save({
             'model_state_dict': self.model.state_dict(),
             'optimizer_state_dict': self.trainer.optimizer.state_dict(),  # Lưu trạng thái optimizer
+            'record': self.record,
             'n_games': self.n_games,  # Lưu số lượng game đã huấn luyện
         }, file_path)
         # print(f"Model saved to {file_path}")
@@ -119,29 +122,17 @@ class Agent:
         file_path = os.path.join('./model', file_name)
         if os.path.exists(file_path):
             checkpoint = torch.load(file_path, weights_only = True)
-            # print(checkpoint)  # In ra checkpoint để kiểm tra cấu trúc
             if 'model_state_dict' in checkpoint and 'optimizer_state_dict' in checkpoint:
                 self.model.load_state_dict(checkpoint['model_state_dict'])  # Load trạng thái model
                 self.trainer.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])  # Load trạng thái optimizer
-                self.n_games = checkpoint.get('n_games', 0)  # Khôi phục số lượng game
-        #         print(f"Model loaded from {file_path}")
-        #     else:
-        #         print(f"Checkpoint does not contain required keys.")
-        # else:
-        #     print(f"No model file found at {file_path}")
-
-    # def save_model(self, file_name='model.pth'):
-    #     self.model.save_model(file_name)
-
-    # def load_model(self, file_name='model.pth'):
-    #     self.model.load_model(file_name)
-        # self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
+                # self.n_games = checkpoint.get('n_games', 0)  # Khôi phục số lượng game
+                self.record = checkpoint.get('record', 0) 
+                self.n_games = 0  # Khôi phục số lượng game
 
 def train():
     plot_scores = []
     plot_mean_scores = []
     total_score = 0
-    record = 0
     agent = Agent()
     game = SnakeGameAI()
 
@@ -174,11 +165,11 @@ def train():
             agent.n_games += 1
             agent.train_long_memory()
 
-            if score > record:
-                record = score
+            if score > agent.record:
+                agent.record = score
                 agent.save_model()
 
-            print('Game', agent.n_games, 'Score', score, 'Record:', record)
+            print('Game', agent.n_games, 'Score', score, 'Record:', agent.record)
 
             plot_scores.append(score)
             total_score += score

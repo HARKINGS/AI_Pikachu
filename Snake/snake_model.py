@@ -15,24 +15,24 @@ class Linear_QNet(nn.Module):
         x = self.linear2(x)
         return x
     
-    def save_model(self, file_name='model.pth'):
-        model_folder_path = './model'
+    # def save_model(self, file_name='model.pth'):
+    #     model_folder_path = './model'
         
-        if not os.path.exists(model_folder_path):
-            os.makedirs(model_folder_path)
+    #     if not os.path.exists(model_folder_path):
+    #         os.makedirs(model_folder_path)
 
-        file_name = os.path.join(model_folder_path, file_name)
-        torch.save(self.state_dict(), file_name)
+    #     file_name = os.path.join(model_folder_path, file_name)
+    #     torch.save(self.state_dict(), file_name)
 
-    def load_model(self, file_name='model.pth'):
-        model_folder_path = './model'
-        file_name = os.path.join(model_folder_path, file_name)
+    # def load_model(self, file_name='model.pth'):
+    #     model_folder_path = './model'
+    #     file_name = os.path.join(model_folder_path, file_name)
         
-        if os.path.exists(file_name):
-            self.load_state_dict(torch.load(file_name))
-            print(f"Model loaded from {file_name}")
-        else:
-            print(f"No model found at {file_name}")
+    #     if os.path.exists(file_name):
+    #         self.load_state_dict(torch.load(file_name))
+    #         print(f"Model loaded from {file_name}")
+    #     else:
+    #         print(f"No model found at {file_name}")
 
 
 class QTrainer:
@@ -70,8 +70,6 @@ class QTrainer:
             target[idx][torch.argmax(action[idx]).item()] = Q_new
     
         # 2: Q_new = r + y * max(next_predicted Q value) -> only do this if not done
-        # pred.clone()
-        # preds[argmax(action)] = Q_new
         self.optimizer.zero_grad()
         loss = self.criterion(target, pred)
         loss.backward()

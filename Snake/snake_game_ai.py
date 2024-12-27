@@ -81,7 +81,7 @@ class SnakeGameAI:
         if self.is_collision() or self.frame_iteration > 100*len(self.snake):
             game_over = True
             reward = -10
-            return reward, game_over, self.score
+            return reward, game_over, self.score            
 
         # 4. place new food or just move
         if self.head == self.food:
@@ -89,12 +89,45 @@ class SnakeGameAI:
             reward = 10
             self._place_food()
         else:
+            reward = 1
+
+            pt = self.head
+            # 5. Danger in front of
+
+            for t in range(1, 2):
+                point_l = Point(pt.x - (3 - t) * BLOCK_SIZE, pt.y)
+                point_r = Point(pt.x + (3 - t) * BLOCK_SIZE, pt.y)
+                point_u = Point(pt.x, pt.y - (3 - t) * BLOCK_SIZE)
+                point_d = Point(pt.x, pt.y + (3 - t) * BLOCK_SIZE)
+                
+                    # snake is moving right or left
+                if self.direction == Direction.RIGHT or self.direction == Direction.LEFT:
+                    if (point_u not in self.snake) and (point_d not in self.snake):
+                        pass
+                    elif (self.direction == Direction.RIGHT) and (point_r not in self.snake):
+                        pass
+                    elif (self.direction == Direction.LEFT) and (point_l not in self.snake):
+                        pass
+                    else:
+                        reward = t - 3
+
+                    # snake is moving up or down
+                if self.direction == Direction.UP or self.direction == Direction.DOWN:
+                    if (point_r not in self.snake) and (point_l not in self.snake):
+                        pass
+                    elif (self.direction == Direction.UP) and (point_u not in self.snake):
+                        pass
+                    elif (self.direction == Direction.DOWN) and (point_d not in self.snake):
+                        pass
+                    else:
+                        reward = t - 3
+
             self.snake.pop()
         
-        # 5. update ui and clock
+        # 6. update ui and clock
         self._update_ui()
         self.clock.tick(SPEED)
-        # 6. return game over and score
+        # 7. return game over and score
         return reward, game_over, self.score
 
 
