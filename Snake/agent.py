@@ -7,16 +7,17 @@ from snake_model import Linear_QNet, QTrainer
 from snake_game_ai import SnakeGameAI, Direction, Point
 from helper import plot
 
-MAX_MEMORY = 100_000
-BATCH_SIZE = 1000
-LR = 0.001
+MAX_MEMORY = 500_000
+BATCH_SIZE = 2000
+LR = 0.0001
+DECAY = 0.9 / 60
 
 class Agent:
 
     def __init__(self):
         self.n_games = 0
         self.record = 0
-        self.epsilon = 0.9 # randomness
+        self.epsilon = 80 # randomness
         self.gamma = 0.9 # discount rate
         self.memory = deque(maxlen=MAX_MEMORY) # popleft()
         self.model = Linear_QNet(11, 1024, 3)
@@ -88,11 +89,12 @@ class Agent:
 
     def get_action(self, state):
         # random moves: tradeoff exploration / exploitation
-        # self.epsilon = 80 - self.n_games
+        self.epsilon = 80 - self.n_games
 
         final_move = [0,0,0]
-        # if random.randint(0, 200) < self.epsilon:
-        if random.random() < self.epsilon:
+        if random.randint(0, 200) < self.epsilon:
+        # if random.random() < self.epsilon:
+        # if random.uniform(0, 2) < self.epsilon:
             move = random.randint(0, 2)
             final_move[move] = 1
         else:
@@ -101,7 +103,6 @@ class Agent:
             move = torch.argmax(prediction).item()
             final_move[move] = 1
 
-        self.epsilon *= 0.98
         return final_move
 
     def save_model(self, file_name='model.pth'):
@@ -112,29 +113,30 @@ class Agent:
         file_path = os.path.join(model_folder_path, file_name)
         torch.save({
             'model_state_dict': self.model.state_dict(),
-            'optimizer_state_dict': self.trainer.optimizer.state_dict(),  # Lưu trạng thái optimizer
+            # Lưu trạng thái optimizer
+            'optimizer_state_dict': self.trainer.optimizer.state_dict(),  
             'record': self.record,
             'n_games': self.n_games,  # Lưu số lượng game đã huấn luyện
         }, file_path)
-        # print(f"Model saved to {file_path}")
 
     def load_model(self, file_name='model.pth'):
         file_path = os.path.join('./model', file_name)
         if os.path.exists(file_path):
             checkpoint = torch.load(file_path, weights_only = True)
             if 'model_state_dict' in checkpoint and 'optimizer_state_dict' in checkpoint:
-                self.model.load_state_dict(checkpoint['model_state_dict'])  # Load trạng thái model
+                # Load trạng thái model
+                self.model.load_state_dict(checkpoint['model_state_dict'])  
                 self.trainer.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])  # Load trạng thái optimizer
-                # self.n_games = checkpoint.get('n_games', 0)  # Khôi phục số lượng game
+                self.n_games = checkpoint.get('n_games', 0)  # Khôi phục số lượng game
                 self.record = checkpoint.get('record', 0) 
-                self.n_games = 0  # Khôi phục số lượng game
+                # self.n_games = 0  # Khôi phục số lượng game
 
 def train():
+    agent = Agent()
+    game = SnakeGameAI()
     plot_scores = []
     plot_mean_scores = []
     total_score = 0
-    agent = Agent()
-    game = SnakeGameAI()
 
     # Load the model if it exists
     if os.path.exists('./model/model.pth'):

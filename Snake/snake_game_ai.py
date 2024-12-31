@@ -80,7 +80,7 @@ class SnakeGameAI:
         game_over = False
         if self.is_collision() or self.frame_iteration > 100*len(self.snake):
             game_over = True
-            reward = -10
+            reward = -50
             return reward, game_over, self.score            
 
         # 4. place new food or just move
@@ -93,7 +93,6 @@ class SnakeGameAI:
 
             pt = self.head
             # 5. Danger in front of
-
             for t in range(1, 2):
                 point_l = Point(pt.x - (3 - t) * BLOCK_SIZE, pt.y)
                 point_r = Point(pt.x + (3 - t) * BLOCK_SIZE, pt.y)
@@ -109,7 +108,7 @@ class SnakeGameAI:
                     elif (self.direction == Direction.LEFT) and (point_l not in self.snake):
                         pass
                     else:
-                        reward = t - 3
+                        reward = (t - 3) * 5
 
                     # snake is moving up or down
                 if self.direction == Direction.UP or self.direction == Direction.DOWN:
@@ -120,7 +119,7 @@ class SnakeGameAI:
                     elif (self.direction == Direction.DOWN) and (point_d not in self.snake):
                         pass
                     else:
-                        reward = t - 3
+                        reward = (t - 3) * 5
 
             self.snake.pop()
         
